@@ -1068,7 +1068,7 @@ bool Calibrate(
         use_cuda, schur_mode, /*max_iteration_count*/ 10, /*cost_reduction_threshold*/ 0.0001, dataset, state, regularization_weight,
         localize_only, calibration_window, step_by_step, state_output_path);
     RunBundleAdjustment(
-        use_cuda, schur_mode, /*max_iteration_count*/ 50, /*cost_reduction_threshold*/ 1, dataset, state, regularization_weight,
+        use_cuda, schur_mode, /*max_iteration_count*/ 10, /*cost_reduction_threshold*/ 1, dataset, state, regularization_weight,
         localize_only, calibration_window, step_by_step, state_output_path);
     
     // Upsample the camera models to the next level
@@ -1116,7 +1116,7 @@ bool Calibrate(
   
   // Run main BA iterations.
   RunBundleAdjustment(
-      use_cuda, schur_mode, /*max_iteration_count*/ 100, /*cost_reduction_threshold*/ 0.0001, dataset, state, regularization_weight,
+      use_cuda, schur_mode, /*max_iteration_count*/ 10, /*cost_reduction_threshold*/ 0.0001, dataset, state, regularization_weight,
       localize_only, calibration_window, step_by_step, state_output_path);
   
   // If we used CUDA, which has a PCG-based BA implementation that is less accurate

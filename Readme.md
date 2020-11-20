@@ -1,5 +1,9 @@
 ## Accurate geometric camera calibration ##
-
+## fork from https://github.com/puzzlepaint/camera_calibration ##
+## main change:  calibration for Realsense d435i 1280*720 and L515 ##
+## for L515 infrared special tags by create_calibration_pattern.py:  --num_star_segments 8 --approx_square_length_in_cm 2 --apriltag_length_in_squares 2
+## ./camera_calibration --refinement_window_half_extent 20 
+## must use glew-1.10.0
 * [Overview](#overview)
 * [About](#about)
 * [Building](#building)

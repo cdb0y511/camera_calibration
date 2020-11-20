@@ -765,10 +765,12 @@ class LMOptimizer {
         //       at the moment.
         if (iteration == 0) {
           if (init_lambda >= 0) {
-            m_lambda = init_lambda;
+            //m_lambda = init_lambda;
+              m_lambda = 0.00005;
           } else {
-            m_lambda = 0;
-            for (usize i = 0; i < m_block_diag_H.size(); ++ i) {
+            //m_lambda = 0;
+              m_lambda = 0.00005;
+              for (usize i = 0; i < m_block_diag_H.size(); ++ i) {
               for (int k = 0; k < m_block_diag_H[i].rows(); ++ k) {
                 m_lambda += m_block_diag_H[i](k, k);
               }
@@ -835,8 +837,8 @@ class LMOptimizer {
           GetHandB(&full_H, &full_b);
           SolveWithFixedVariables(full_H, full_b);
         } else {
-          // Add to the diagonal of H according to the Levenberg-Marquardt method.
-          if (!m_on_the_fly_block_processing) {
+            // Add to the diagonal of H according to the Levenberg-Marquardt method.
+/*          if (!m_on_the_fly_block_processing) {
             int diagonal_index = 0;
             for (usize i = 0; i < m_block_diag_H.size(); ++ i) {
               for (int k = 0; k < m_block_diag_H[i].rows(); ++ k) {
@@ -849,25 +851,39 @@ class LMOptimizer {
               ++ diagonal_index;
             }
             CHECK_EQ(diagonal_index, degrees_of_freedom);
-          }
-          
-          if (block_diagonal_degrees_of_freedom > 0) {
-            if (m_sparse_storage_for_off_diag_H) {
-              SolveWithSchurComplementSparseOffDiag(
-                  block_diagonal_degrees_of_freedom,
-                  dense_degrees_of_freedom,
-                  state,
-                  cost_function);
-            } else {
-              SolveWithSchurComplementDenseOffDiag(
-                  block_diagonal_degrees_of_freedom,
-                  dense_degrees_of_freedom,
-                  state,
-                  cost_function);
+          }*/
+            bool m_apply_lambda_on_diag = true;
+            if (!m_on_the_fly_block_processing) {
+                int diagonal_index = 0;
+                for (usize i = 0; i < m_block_diag_H.size(); ++ i) {
+                    for (int k = 0; k < m_block_diag_H[i].rows(); ++ k) {
+                        m_block_diag_H[i](k, k) = m_apply_lambda_on_diag ? ((1 + m_lambda) * m_original_diagonal[diagonal_index]) : (m_original_diagonal[diagonal_index] + m_lambda);
+                        ++ diagonal_index;
+                    }
+                }
+                for (int i = 0; i < dense_degrees_of_freedom; ++ i) {
+                    m_dense_H(i, i) = m_apply_lambda_on_diag ? ((1 + m_lambda) * m_original_diagonal[diagonal_index]) : (m_original_diagonal[diagonal_index] + m_lambda);
+                    ++ diagonal_index;
+                }
+                        CHECK_EQ(diagonal_index, degrees_of_freedom);
             }
-          } else {
-            SolveDensely(m_dense_H, m_dense_b, &m_x);
-          }
+            if (block_diagonal_degrees_of_freedom > 0) {
+                if (m_sparse_storage_for_off_diag_H) {
+                    SolveWithSchurComplementSparseOffDiag(
+                            block_diagonal_degrees_of_freedom,
+                            dense_degrees_of_freedom,
+                            state,
+                            cost_function);
+                } else {
+                    SolveWithSchurComplementDenseOffDiag(
+                            block_diagonal_degrees_of_freedom,
+                            dense_degrees_of_freedom,
+                            state,
+                            cost_function);
+                }
+            } else {
+                SolveDensely(m_dense_H, m_dense_b, &m_x);
+            }
         }
         
         report.solve_time += solve_timer.Stop(/*add_to_statistics*/ false);

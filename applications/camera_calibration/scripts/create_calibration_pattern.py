@@ -33,8 +33,8 @@ import math
 import sys
 
 import numpy as np
-from scipy.misc import imread
-
+#from scipy.misc import imread
+from imageio import imread
 # This requires reportlab, installed like this:
 # sudo pip3 install reportlab
 from reportlab.pdfgen import canvas

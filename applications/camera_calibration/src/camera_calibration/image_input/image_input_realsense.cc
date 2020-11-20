@@ -189,8 +189,8 @@ void ImageInputRealSense::ThreadMain(const vector<shared_ptr<AvailableInput>>& i
     
     // Choose the stream profile with the largest image area (TODO: Allow the user to select the profile).
     std::vector<rs2::stream_profile> stream_profiles = input->sensor.get_stream_profiles();
-    int best_image_area = 0;
-    int best_fps = 0;
+    int best_image_area = 1280*720;
+    int best_fps = 60;
     rs2::stream_profile* best_profile = nullptr;
     for (rs2::stream_profile& profile : stream_profiles) {
       if (profile.stream_type() != input->stream_type ||
@@ -204,13 +204,14 @@ void ImageInputRealSense::ThreadMain(const vector<shared_ptr<AvailableInput>>& i
       if (!IsSupportedFormat(video_stream_profile.format())) {
         continue;
       }
-      
+      //set 1280*720
       int image_area = video_stream_profile.width() * video_stream_profile.height();
-      if (image_area > best_image_area) {
+/*      if (image_area > best_image_area) {
         best_image_area = image_area;
         best_fps = video_stream_profile.fps();
         best_profile = &profile;
-      } else if (image_area == best_image_area && video_stream_profile.fps() > best_fps) {
+      } else */
+      if (image_area == best_image_area && video_stream_profile.fps() == best_fps) {
         best_fps = video_stream_profile.fps();
         best_profile = &profile;
       }
